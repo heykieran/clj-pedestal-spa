@@ -21,6 +21,7 @@
                 io.pedestal/pedestal.service {:mvn/version "0.5.7"}
                 io.pedestal/pedestal.route {:mvn/version "0.5.7"}
                 io.pedestal/pedestal.jetty {:mvn/version "0.5.7"}
+                ;;buddy/buddy-auth {:local/root "/home/heykieran/dev/buddy-auth"}
                 buddy/buddy-auth {:mvn/version "2.2.0"}
                 buddy/buddy-core {:mvn/version "1.6.0"}
                 buddy/buddy-sign {:mvn/version "3.1.0"}
@@ -73,6 +74,16 @@
                 cljsjs/semantic-ui-react {:mvn/version "0.88.1-0"}
                 kee-frame {:mvn/version "0.4.0"}}
    :extra-paths ["common-src" "fe-src" "resources" "target"]
-   :main-opts ["-m" "figwheel.main" "-bo" "prod"]}}
+   :main-opts ["-m" "figwheel.main" "-bo" "prod"]}
+
+  :build
+  {:paths ["src"]
+   :extra-paths ["build"]
+   :extra-deps
+   {badigeon/badigeon
+    {:git/url "https://github.com/EwenG/badigeon.git"
+     :sha "1edf7ae465db870ec0066f28226edb9b04873b70" ;;"f4bcca58536f49c10a5ea87b662f33ccf83338ce"
+     :tag "0.0.11"}}}
+  }
  :paths
 ["src"]}

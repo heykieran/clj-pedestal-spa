@@ -1,8 +1,11 @@
 # About
 
-This version of the repository is a basic ReFrame/Reagent SPA which interacts with a Pedestal backend. An extended description can be found in a blog post [here][related-blog-post].
+In previous [blog post][old-blog-post] I discussed how to deploy a full-stack Clojure application as a Docker container. 
 
-Later versions will build upon this, adding greater capabilities, such as docker deployment, other authentication methods (i.e jwt and IAP), deployment to Kubernetes, and server-to-client communication using web sockets and SSE.
+In this version of the repository I integrate the build process within the repo itself, so the back-end application, the front-end SPA, and the build process are self contained.
 
-[related-blog-post]: https://heykieran.github.io/post/pedestal-and-google/
+A full discussion of this version can be found in this [blog post][related-blog-post].
+
+[old-blog-post]: https://heykieran.github.io/post/deploy-pedestal-react-to-docker/
+[related-blog-post]: https://heykieran.github.io/post/integrated-build-to-docker/
 
