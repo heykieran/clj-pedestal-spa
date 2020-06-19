@@ -1,0 +1,211 @@
+.numerical-input > input {
+    font-family: "Courier New" ! important;
+}
+
+div.fixed-report-link {
+    font-family: "Courier New";
+    padding-top: 5px;
+}
+
+div.fixed-report-header {
+    font-family: "Courier New";
+    font-weight: bold;
+    padding-top: 10px;
+}
+
+table#portfolio {
+    font-family: "Courier New";
+    font-size: xx-small;
+    border-collapse: collapse;
+}
+
+table#portfolio #header {
+    font-family: "Courier New";
+    font-size: xx-small;
+    color: blue;
+}
+
+table#portfolio #header th {
+    padding-top: 0.5em;
+    padding-bottom: 0.5em;
+    padding-left: 0.2em;
+    padding-right: 0.2em;
+}
+
+.commitmentheader {
+    color: black;
+}
+
+table#portfolio td,th {
+    padding-top: 0.3em;
+    padding-left: 0.5em;
+    padding-right: 0.5em;
+}
+
+table#portfolio td + td {
+    border-left:1px solid silver;
+}
+
+table#portfolio tfoot th {
+    padding-top: 0.4em;
+    padding-left: 0.5em;
+    padding-right: 0.5em;
+}
+
+table#portfolio th + th {
+    border-left:1px solid silver;
+}
+
+table#commitment {
+    font-family: "Courier New";
+    font-size: xx-small;
+    width: 100%;
+}
+
+table#commitment td {
+    padding-top: 3px;
+    padding-bottom: 3px;
+}
+
+table#commitment tr:nth-child(odd) {
+    background: #e9e9e9;
+}
+
+table#commitment #header {
+    font-family: "Courier New";
+    font-size: xx-small;
+    color: blue;
+}
+
+table#ledger-balance {
+    font-family: "Courier New";
+    font-size: xx-small;
+}
+
+table#ledger-balance #header {
+    font-family: "Courier New";
+    font-size: x-small;
+    color: blue;
+    padding-top: .2em;
+    padding-bottom: .2em;
+}
+
+#acinfo td {
+    padding-bottom: 0.2em;
+}
+
+#acinfo a {
+    cursor: pointer;
+    color: inherit;
+}
+
+table#ledger-register {
+    font-family: "Courier New";
+    font-size: xx-small;
+}
+
+table#ledger-register #header {
+    font-family: "Courier New";
+    font-size: xx-small;
+    color: blue;
+}
+
+div#ledger-register{
+    font-family: "Courier New";
+    font-size: xx-small;
+    color: gray;
+}
+
+div#ledger-register h1,h2,h3,h4,h5 {
+    font-family: "Courier New";
+    font-size: xx-small;
+    color: gray;
+}
+
+table#comparison-report {
+    font-family: "Courier New";
+    font-size: xx-small;
+}
+
+table#comparison-report #header {
+    font-family: "Courier New";
+    font-size: x-small;
+    color: blue;
+}
+
+div#report-container h1,h2,h3,h4,h5,h6 {
+    font-family: "Courier New";
+    font-size: x-small;
+    color: black;
+    margin-bottom: 0.6em;
+}
+
+.lifecycle-report-table {
+    color: black;
+    font-size: xx-small;
+    font-family: "Courier New";
+}
+
+.tx-diff-div {
+    margin-left: auto;
+    margin-right: auto;
+    width: 100%;
+}
+
+.tx-diff-detail-table {
+    color: black;
+    width: 100%;
+    font-size: xx-small;
+    border-collapse: collapse;
+    font-family: "Courier New";
+}
+
+.tx-diff-detail-table tbody tr:nth-child(odd) {
+    background: #e9e9e9;
+    font-size: inherit;
+    font-family: inherit;
+}
+
+.tx-diff-detail-table tbody td {
+    vertical-align: top;
+    padding-bottom: .2em;
+    padding-top: .2em;
+}
+
+.tx-diff-detail-table thead {
+    border-top: black solid 1px;
+    color: blue;
+    padding-top: 0.75em;
+    padding-bottom: 0.75em;
+    margin-top: 2em;
+    margin-bottom: 1em;
+    background: beige;
+}
+
+.tx-diff-detail-table thead th {
+    padding-top: 0.35em;
+}
+
+.tx-diff-detail-table thead td {
+    border-top: black solid 1px;
+    padding-top: 1.25em;
+    padding-bottom: 0.75em;
+}
+
+.tx-diff-detail-table tfoot {
+    border-top: black solid 1px;
+}
+
+.tx-diff-detail-table tfoot th,td {
+    padding-top: 0.5em;
+    padding-bottom: 0.75em;
+}
+
+
+.tx-diff-detail-table th + th {
+    border-left:1px solid silver;
+}
+
+.tx-diff-detail-table td + td {
+    border-left:1px solid silver;
+}

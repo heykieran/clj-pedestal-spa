@@ -1,0 +1,13 @@
+^{:watch-dirs ["cljs-src"]
+  :css-dirs ["resources/public/css"]
+  :auto-testing false
+  :pprint-config false
+  :target-dir "target"
+  :helpful-classpaths true
+  :open-url "https://[[server-hostname]]:8081/r/home"
+  }
+{:main web.reframe
+ :npm-deps false
+ :infer-externs true
+ :optimizations :advanced}
+

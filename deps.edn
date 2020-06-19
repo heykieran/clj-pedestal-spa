@@ -1,0 +1,78 @@
+{:deps
+ {org.clojure/clojure {:mvn/version "1.10.1"}
+  org.clojure/clojurescript {:mvn/version "1.10.597"}
+  org.clojure/core.async {:mvn/version "1.2.603"}
+  clojure.java-time {:mvn/version "0.3.2"}
+  org.threeten/threeten-extra {:mvn/version "1.5.0"}
+  cljs-http {:mvn/version "0.1.46"}
+  clj-http {:mvn/version "3.10.0"}
+  haslett {:mvn/version "0.1.6"}
+  com.cognitect/transit-cljs {:mvn/version "0.8.256"}
+  com.cognitect/transit-clj {:mvn/version "0.8.313"}}
+ 
+ :aliases
+ {:main
+  {:paths ["src"]
+   :extra-deps {ch.qos.logback/logback-classic {:mvn/version "1.2.3"}
+                org.clojure/tools.logging {:mvn/version "0.4.1"}
+                ring/ring-core {:mvn/version "1.8.0"}
+                ring/ring-jetty-adapter {:mvn/version "1.8.0"}
+                ring/ring-devel {:mvn/version "1.8.0"}
+                io.pedestal/pedestal.service {:mvn/version "0.5.7"}
+                io.pedestal/pedestal.route {:mvn/version "0.5.7"}
+                io.pedestal/pedestal.jetty {:mvn/version "0.5.7"}
+                buddy/buddy-auth {:mvn/version "2.2.0"}
+                buddy/buddy-core {:mvn/version "1.6.0"}
+                buddy/buddy-sign {:mvn/version "3.1.0"}
+                cheshire {:mvn/version "5.10.0"}
+                hiccup {:mvn/version "1.0.5"}
+                org.conscrypt/conscrypt-openjdk-uber {:mvn/version "2.2.1"}
+                org.eclipse.jetty/jetty-alpn-conscrypt-server {:mvn/version "9.4.24.v20191120"}
+                com.google.api-client/google-api-client {:mvn/version "1.30.6"}
+                github-heykieran/dyn-edn
+                {:git/url "https://github.com/heykieran/dyn-edn" 
+                 :sha "855a775959cf1bec531a303a323e6f05f7b260fb"}}
+   :extra-paths ["resources" "common-src"]}
+
+  :main-output
+  {:extra-paths ["target"]}
+  
+  :dev
+  {:paths ["cljs-src"]
+   :extra-deps {;; Frontend
+                com.bhauman/figwheel-main {:mvn/version "0.2.6"}
+                com.bhauman/rebel-readline-cljs {:mvn/version "0.1.4"}
+                reagent-utils             {:mvn/version "0.3.3"}
+                metosin/compojure-api {:mvn/version "2.0.0-alpha30"}
+                binaryage/oops {:mvn/version "0.7.0"}
+                com.andrewmcveigh/cljs-time {:mvn/version "0.5.2"}
+                reagent {:mvn/version "1.0.0-alpha2"}
+                re-frame {:mvn/version  "1.0.0-rc2"}
+                cljsjs/semantic-ui-react {:mvn/version "0.88.1-0"}
+                re-frisk {:mvn/version  "1.3.2"}
+                kee-frame {:mvn/version "0.4.0"}
+                buddy/buddy-auth {:mvn/version "2.2.0"}
+                buddy/buddy-core {:mvn/version "1.6.0"}
+                buddy/buddy-sign {:mvn/version "3.1.0"}
+                github-heykieran/dyn-edn
+                {:git/url "https://github.com/heykieran/dyn-edn" 
+                 :sha "855a775959cf1bec531a303a323e6f05f7b260fb"}}
+   :extra-paths ["common-src" "fe-src" "resources" "target"]
+   :main-opts ["-i" "scripts/server.clj" "-m" "figwheel.main" "-b" "dev" "-r"]}
+
+  :prod
+  {:paths ["cljs-src"]
+   :extra-deps {com.bhauman/figwheel-main {:mvn/version "0.2.6"}
+                com.bhauman/rebel-readline-cljs {:mvn/version "0.1.4"}
+                reagent-utils             {:mvn/version "0.3.3"}
+                metosin/compojure-api {:mvn/version "2.0.0-alpha30"}
+                binaryage/oops {:mvn/version "0.7.0"}
+                com.andrewmcveigh/cljs-time {:mvn/version "0.5.2"}
+                reagent {:mvn/version "1.0.0-alpha2"}
+                re-frame {:mvn/version  "1.0.0-rc2"}
+                cljsjs/semantic-ui-react {:mvn/version "0.88.1-0"}
+                kee-frame {:mvn/version "0.4.0"}}
+   :extra-paths ["common-src" "fe-src" "resources" "target"]
+   :main-opts ["-m" "figwheel.main" "-bo" "prod"]}}
+ :paths
+["src"]}

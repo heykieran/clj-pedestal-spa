@@ -1,0 +1,9 @@
+{:jetty
+ {:keystore-location #dyn/prop ALLOC_KEYSTORE_LOCATION
+  :keystore-password #dyn/prop ALLOC_KEYSTORE_PASSWORD
+  :ssl-port #dyn/long #dyn/prop ALLOC_SSL_PORT
+  :port #dyn/long #dyn/prop ALLOC_PORT}
+ :build-info
+ {:id #dyn/prop [ALLOC_BUILD_ID "default-unknown"]}
+ :auth
+ {:session-store-key #dyn/prop [ALLOC_SESSION_STORE_KEY]}}

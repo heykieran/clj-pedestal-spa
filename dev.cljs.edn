@@ -1,0 +1,14 @@
+^{:watch-dirs ["cljs-src"]
+  :css-dirs ["resources/public/css"]
+  :auto-testing false
+  :pprint-config false
+  :target-dir "target"
+  :helpful-classpaths true
+  :open-url "https://[[server-hostname]]:9501/r/home"
+  }
+{:main web.reframe
+ :npm-deps false
+ :infer-externs true
+ :optimizations :none
+ :preloads [re-frisk.preload]}
+
