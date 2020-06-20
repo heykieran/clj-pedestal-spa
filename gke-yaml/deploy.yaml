@@ -1,0 +1,36 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  labels:
+    app: allocations-app-v1
+  name: allocations-app-v1-web
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: allocations-app-v1
+      tier: allocations-app-v1-web
+  template:
+    metadata:
+      labels:
+        app: allocations-app-v1
+        tier: allocations-app-v1-web
+    spec:
+      containers:
+      - image: gcr.io/allocations-accounting-v1/allocations-accounting:v1.0
+        name: allocations-app-v1-app
+        ports:
+        - containerPort: 8081
+        env:
+        - name: ALLOC_HOST_NAME
+          value: demo.timpsongray.com
+        - name: ALLOC_KEYSTORE_PASSWORD
+          valueFrom:
+            secretKeyRef:
+              key: ALLOC_KEYSTORE_PASSWORD
+              name: allocations-app-v1-secrets
+        - name: ALLOC_SESSION_STORE_KEY
+          valueFrom:
+            secretKeyRef:
+              key: ALLOC_SESSION_STORE_KEY
+              name: allocations-app-v1-secrets

@@ -55,6 +55,6 @@ run-local: export ALLOC_PORT=8080
 run-local: export ALLOC_KEYSTORE_LOCATION=$(PWD)/$(DOCKER_LOCATION)/deploy/local/jetty-keystore
 run-local: export ALLOC_SESSION_STORE_KEY=akh6y98dhyt54sch
 
-# make run-local ALLOC_KEYSTORE_PASSWORD=the_real_password
+# make run-local ALLOC_KEYSTORE_PASSWORD=the_real_password ALLOC_AUTH_DEBUG_JWT_KEY=the_real_key
 run-local: build $(DOCKER_LOCATION)/deploy
 	cd $(DOCKER_LOCATION)/deploy && java ${JAVA_OPTS} -cp ".:classes:app:app/lib/*" main.core

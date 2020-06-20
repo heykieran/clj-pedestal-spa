@@ -17,7 +17,7 @@
 (def default-content-security-policy
   (str "default-src 'self'; "
        "img-src 'self' " server-config/my-hostname ":*; "
-       "connect-src 'self' ws://localhost:* wss://localhost:* https://localhost:* " "wss://" server-config/host ":* " server-config/my-hostname ":*; "
+       "connect-src 'self' " server-config/my-hostname ":* ws://localhost:* wss://localhost:* https://localhost:* " "wss://" server-config/host ":* " server-config/my-hostname ":*; "
        "script-src 'self' " server-config/my-hostname ":*" " https://apis.google.com 'unsafe-eval' 'unsafe-inline';"
        "script-src-elem 'self' " server-config/my-hostname ":*" " https://apis.google.com https://cdn.jsdelivr.net https://code.jquery.com 'unsafe-inline';"
        "font-src 'self' data: https://fonts.gstatic.com https://cdn.jsdelivr.net;"

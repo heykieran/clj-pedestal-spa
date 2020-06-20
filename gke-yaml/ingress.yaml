@@ -1,0 +1,14 @@
+apiVersion: networking.k8s.io/v1beta1
+kind: Ingress
+metadata:
+  name: allocations-app-v1-web
+  annotations:
+    kubernetes.io/ingress.global-static-ip-name: "allocations-app-v1-addr"
+    kubernetes.io/ingress.allow-http: "false"
+    networking.gke.io/managed-certificates: "allocations-app-v1-cert"
+  labels:
+    app: allocations-app-v1
+spec:
+  backend:
+    serviceName: allocations-app-v1-svc
+    servicePort: 8081
