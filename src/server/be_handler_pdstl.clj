@@ -7,13 +7,18 @@
     [io.pedestal.http.content-negotiation :as conneg]
     [server.transit-handlers :as tr-handlers]
     [buddy.auth]
+    [buddy.auth.accessrules]
     [hiccup.core :refer [html]]
     [ring.middleware.session.cookie :refer [cookie-store]]
     [io.pedestal.http.ring-middlewares :as middlewares]
     [server.auth.base :as app-auth]
     [server.auth.header :as app-header-auth]
     [config.server :as server-config]
-    [java-time :as time])
+    [java-time :as time]
+    [server.messaging.websocket :as server-ws]
+    [server.messaging.channel :as rlog]
+    [server.messaging.transport :as msg-transport]
+    [server.messaging.sse :as my-sse])
   (:import (org.eclipse.jetty.server Server)))
 
 (def default-content-security-policy
@@ -157,6 +162,12 @@
     [session-id (get request :asys/session-id)]
     (log/info "Getting secured resource"
               "session-id is " session-id)
+    (rlog/with-forward-context
+      session-id
+      (log/info "OK for access to secured resource"
+                (pr-str (:uri request))
+                ". session-id:"
+                (pr-str session-id)))
     (ok
       {:the-results
        "Let's pretend that this is something interesting."})))
@@ -213,12 +224,14 @@
       alloc-auth-interceptors)))
 
 (defn build-secured-route-vec-to
-  [handler]
+  [handler & {:keys [:rules]}]
   (into
     []
     (concat
       common+auth-interceptors
-      [handler])))
+      (if rules
+        [(app-auth/alloc-auth-rules-checker-interceptor-factory rules) handler]
+        [handler]))))
 
 (defn respond-with-app-page
   [request]
@@ -259,9 +272,43 @@
       "Content-Security-Policy"
       default-content-security-policy)))
 
+(def url-access-rules
+  [{:pattern #"^/testsec$"
+    :handler (fn [req]
+               (pprint/pprint
+                 req)
+               (if-let
+                 [user-identity (:identity req)]
+                 (buddy.auth.accessrules/success)
+                 (buddy.auth.accessrules/error)))}])
+
+(def events-access-rules
+  [{:uri     "/sse/events/:user/:session-id"
+    :handler (fn [req]
+               (let
+                 [{session-name :session-id user-id :user}
+                  (-> req :match-params)
+                  user-identity (-> req :identity)
+                  auth? (buddy.auth/authenticated? req)
+                  uri (-> req :uri)]
+                 (log/info
+                   "Checking access by "
+                   user-id
+                   "to session"
+                   session-name "("
+                   uri ") for identity" user-identity ", auth: "
+                   auth?)
+                 (if (and
+                       auth?
+                       (= (keyword user-id)
+                          (:alloc-auth/user-id user-identity)))
+                   (buddy.auth.accessrules/success)
+                   (buddy.auth.accessrules/error))))}])
+
 (def routes
   (route/expand-routes
     #{["/" :get landing-page :route-name :landing-page]
+      ["/sse/events/:user/:session-id/:connection-uuid" :get (build-secured-route-vec-to my-sse/sse-create-event-stream-interceptor :rules events-access-rules) :route-name :alloc-user/sse-events]
       ["/healthz" :get health-report :route-name :health-check]
       ["/echo"  :get echo :route-name :echo]
       ["/debug/token/:email" :post app-auth/alloc-auth-create-debug-token-for-user :route-name :create-debug-token]
@@ -289,7 +336,8 @@
    ::http/resource-path "/public"
    ::http/type   :jetty
    ::http/container-options
-   {:h2c? true
+   {:context-configurator server-ws/websocket-configurator-for-jetty
+    :h2c? true
     :h2 true
     :ssl? true
     :ssl-port server-config/server-ssl-port
@@ -316,13 +364,17 @@
   (if-not
     (server-can-be-started?)
     (println "start-dev requested but Jetty Server is already running.")
-    (reset!
-     server-dev
-     (http/start
-      (http/create-server
-       (-> service-map
-           (assoc
-            ::http/join? false)))))))
+    (do
+      (msg-transport/message-transport
+        :sse
+        rlog/server-messages-channel-destined-for-all-clients)
+      (reset!
+        server-dev
+        (http/start
+          (http/create-server
+            (-> service-map
+                (assoc
+                  ::http/join? false))))))))
 
 (defn start
   ([]
@@ -334,12 +386,16 @@
        (.isStopped
          ^Server
          (-> server-prod deref :io.pedestal.http/server)))
-     (reset!
-      server-prod
-      (http/start
-       (http/create-server
-        (assoc service-map
-               ::http/join? join?)))))))
+     (do
+       (msg-transport/message-transport
+         :sse ;; :web-socket
+         rlog/server-messages-channel-destined-for-all-clients)
+       (reset!
+         server-prod
+         (http/start
+           (http/create-server
+             (assoc service-map
+               ::http/join? join?))))))))
 
 (defn restart []
   (stop-dev)

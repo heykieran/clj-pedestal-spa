@@ -10,6 +10,8 @@
     [web.test.ui :as test-ui]
     [web.auth.ui :as m-auth-ui]
     [web.home.ui :as home-ui]
+    [web.logs.ui :as logs-ui]
+    [web.sse-logs.ui :as sse-logs-ui]
     [web.auth.utils :as auth-utils]))
 
 (defn get-setup-menu-items
@@ -41,7 +43,27 @@
                  [:go-to-sign-in-page
                   current-logged-in-user]))}
         [:> sem/icon {:name :lock}]
-        "Users"]]
+        "Users"]
+       [:> sem/menu-item
+        {:as "a"
+         :on-click
+             (fn[e d]
+               (hide-sidebar)
+               (rf/dispatch
+                 [:go-to-log-page
+                  current-logged-in-user]))}
+        [:> sem/icon {:name :info}]
+        "Logs"]
+       [:> sem/menu-item
+        {:as "a"
+         :on-click
+             (fn[e d]
+               (hide-sidebar)
+               (rf/dispatch
+                 [:go-to-sse-log-page
+                  current-logged-in-user]))}
+        [:> sem/icon {:name :info}]
+        "SSE Logs"]]
       (mapv
         (fn[[type-kw sec-type text icon-name]]
           [:> sem/menu-item
@@ -160,6 +182,14 @@
             [test-ui/admin-ui]
             :auth/manage
             [m-auth-ui/main-login-ui current-logged-in-user]
+            :logs/show
+            [logs-ui/log-page-ui
+             current-logged-in-user
+             @(rf/subscribe [:logs/log-messages])]
+            :sse-logs/show
+            [sse-logs-ui/sse-log-page-ui
+             current-logged-in-user
+             @(rf/subscribe [:sse-logs/log-messages])]
             [:> sem/segment
              (str "BLANK WITH " item-id ". Are you missing something?")])]]]])))
 

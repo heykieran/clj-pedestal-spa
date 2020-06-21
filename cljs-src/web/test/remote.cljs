@@ -26,7 +26,9 @@
                        token-sec?
                        {:headers
                         {:x-debug-token
-                         (:ext-token current-logged-in-user)}})
+                         (:ext-token current-logged-in-user)
+                         :response-session-id
+                         (:client-id current-logged-in-user)}})
        target-uri
        (case
          which-one

@@ -13,6 +13,9 @@
     [clojure.tools.logging :as log]
     [clojure.pprint]
     [java-time :as t]
+    [server.messaging.channel :as rlog]
+    [server.messaging.sse]
+    [server.messaging.websocket]
     [config.server :as server-config]
     [server.auth.data :as auth-data]
     [server.auth.utils :as auth-utils]
@@ -193,6 +196,19 @@
         (swap! auth-data/alloc-auth-logged-in-users
                dissoc
                [session-user session-id "single-session-only"])
+
+        (try
+          (server.messaging.sse/disconnect-sse-client session-user session-id)
+          (catch Exception e
+            (log/error "Errors encountered closing SSE connection"
+                       "to client. IGNORING.")))
+        (try
+          (server.messaging.websocket/disconnect-ws-client
+            session-user session-id)
+          (catch Exception e
+            (log/error "Errors encountered closing websocket connection"
+                       "to client. IGNORING.")))
+
         {:user nil :authority nil :expires nil :message "User logged out"}))
     (raw-response
       {:user    nil :authority nil :expires nil :message "User not logged in."})))

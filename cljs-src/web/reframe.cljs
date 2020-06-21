@@ -14,7 +14,9 @@
             [web.auth.remote]
             [web.main.ui :as main-ui]
             [web.test.ui :as test-ui]
-            [web.home.ui :as home-ui]))
+            [web.home.ui :as home-ui]
+            [web.logs.ui :as logs-ui]
+            [web.sse-logs.ui :as sse-logs-ui]))
 
 (enable-console-print!)
 
@@ -89,18 +91,28 @@
           path-params (get route :path-params)
           current-logged-in-user @(rf/subscribe [:auth/logged-in-user])]
       [:<>
+
+       [logs-ui/log-holder-element-ui current-logged-in-user]
+       [sse-logs-ui/sse-log-holder-element-ui current-logged-in-user]
+
        [:div
         (case
           (get-in route [:data :name])
           :setup-page-main-item [main-ui/main-ui (keyword :setup (:id path-params)) current-logged-in-user]
           :app-home-page [main-ui/main-ui :home current-logged-in-user]
           :auth-login-page [main-ui/main-ui (keyword :auth :manage) current-logged-in-user]
-          [unknown-ui route])]])))
+          :show-log-page [main-ui/main-ui (keyword :logs :show) current-logged-in-user]
+          :show-sse-log-page [main-ui/main-ui (keyword :sse-logs :show) current-logged-in-user]
+          [unknown-ui route])
+        #_[:div "Errors:" (pr-str @(rf/subscribe [:application-errors]))]
+        #_[:div "Route:" (pr-str route)]]])))
 
 (def routes
   [["/r/home" :app-home-page]
    ["/r/app/setup/:id" :setup-page-main-item]
-   ["/r/app/auth/login" :auth-login-page]])
+   ["/r/app/auth/login" :auth-login-page]
+   ["/r/app/log" :show-log-page]
+   ["/r/app/sse-log" :show-sse-log-page]])
 
 (rf/reg-event-fx
   :go-to-home-page
@@ -117,6 +129,20 @@
       (str "In :go-to-sign-in-page is reframe.cljs with "
            (pr-str current-logged-in-user)))
     {:navigate-to [:auth-login-page]
+     :dispatch-n [[:auth/get-logged-in-user
+                   current-logged-in-user]]}))
+
+(rf/reg-event-fx
+  :go-to-log-page
+  (fn [_ [_ current-logged-in-user]]
+    {:navigate-to [:show-log-page]
+     :dispatch-n [[:auth/get-logged-in-user
+                   current-logged-in-user]]}))
+
+(rf/reg-event-fx
+  :go-to-sse-log-page
+  (fn [_ [_ current-logged-in-user]]
+    {:navigate-to [:show-sse-log-page]
      :dispatch-n [[:auth/get-logged-in-user
                    current-logged-in-user]]}))
 

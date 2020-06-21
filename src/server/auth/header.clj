@@ -18,6 +18,7 @@
     [clojure.string :as str]
     [utils.utils :as gen-utils]
     [server.auth.data :as auth-data]
+    [server.messaging.channel :as rlog]
     [config.server :as server-config]))
 
 (defn token-authfn
@@ -170,8 +171,14 @@
                                "roles: " (pr-str roles) ", "
                                "required roles: " (pr-str required) ". "
                                "session-id: " (pr-str user-response-session) ".")]
-                      (log/error
-                       error-message))
+                      (if user-session
+                        (rlog/with-forward-context
+                          user-response-session
+                          (log/error
+                            error-message)
+                          {:message-type :error})
+                        (log/error
+                          error-message)))
                     (cond
                       ;; If request is authenticated, raise 403 instead
                       ;; of 401 (because user is authenticated but permission
