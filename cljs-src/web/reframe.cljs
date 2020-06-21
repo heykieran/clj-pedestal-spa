@@ -130,11 +130,12 @@
 
 (rf/reg-event-fx
   :setup-main-item
-  (fn [_ [_ current-logged-in-user item-id]]
+  (fn [_ [_ current-logged-in-user sec-type item-id]]
     {:dispatch
      [:test/get-secured-resource
       current-logged-in-user
-      item-id]
+      item-id
+      sec-type]
      :navigate-to
      [:setup-page-main-item
       {:id item-id}]}))

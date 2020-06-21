@@ -6,4 +6,5 @@
  :build-info
  {:id #dyn/prop [ALLOC_BUILD_ID "default-unknown"]}
  :auth
- {:session-store-key #dyn/prop [ALLOC_SESSION_STORE_KEY]}}
+ {:debug-jwt-key #dyn/prop [ALLOC_AUTH_DEBUG_JWT_KEY]
+  :session-store-key #dyn/prop [ALLOC_SESSION_STORE_KEY]}}

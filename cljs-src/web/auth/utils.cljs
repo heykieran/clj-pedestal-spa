@@ -3,7 +3,11 @@
 (defn logged-in-user-description
       [logged-in-user]
       (if logged-in-user
-        (get-in logged-in-user [:user])
+        (str (get-in logged-in-user [:user])
+             "/"
+             (get-in logged-in-user [:authority])
+             (if (get-in logged-in-user [:ext-token])
+               "*"))
         "Anonymous"))
 
 (defn is-logged-in?
@@ -20,7 +24,7 @@
     (fn[u-map]
       (select-keys
         u-map
-        [:user :authority :client-id :expires]))
+        [:user :authority :client-id :expires :ext-token]))
     [get-logged-in-user-response db-logged-in-user])
   (apply
     =
@@ -28,5 +32,5 @@
       (fn[u-map]
         (select-keys
           u-map
-          [:user :authority :client-id :expires]))
+          [:user :authority :client-id :expires :ext-token]))
       [get-logged-in-user-response db-logged-in-user])))

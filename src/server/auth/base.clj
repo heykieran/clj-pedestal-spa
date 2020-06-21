@@ -5,6 +5,7 @@
     [io.pedestal.interceptor.error :refer [error-dispatch]]
     [ring.util.response :as ring-response]
     [buddy.auth :as auth]
+    [buddy.sign.jwt :as jwt]
     [buddy.auth.backends :as auth.backends]
     [buddy.auth.middleware :as auth.middleware]
     [buddy.auth.accessrules :as auth.accessrules]
@@ -14,7 +15,8 @@
     [java-time :as t]
     [config.server :as server-config]
     [server.auth.data :as auth-data]
-    [server.auth.utils :as auth-utils]))
+    [server.auth.utils :as auth-utils]
+    [server.auth.debug :as debug-sign]))
 
 (def debug-secret "secret")
 
@@ -38,7 +40,8 @@
      id-token]
     {:user      user
      :authority authority
-     :client-id client-id :expires expiration}))
+     :client-id client-id :expires expiration
+     :ext-token ext-token}))
 
 (defn get-current-logged-in-user
   [request]
@@ -58,7 +61,7 @@
           (-> identity-token
               (extract-user-response-from-token)))
         {:user      nil :authority nil :expires nil
-         :client-id nil}))))
+         :client-id nil :ext-token nil}))))
 
 (defn attach-session-id-to-login-info
   [{user-id :alloc-auth/user-id :as login-info}]
@@ -90,7 +93,10 @@
          (->
            {:alloc-auth/user-id    user-id
             :alloc-auth/token-type :google
-            :alloc-auth/token      verified-token}
+            :alloc-auth/token      verified-token
+            :alloc-auth/ext-token  (debug-sign/sign-using-debug-key
+                                     server-config/debug-local-jwt
+                                     {:email user-email})}
            (attach-session-id-to-login-info))
          session (:session request)]
         (log/info
@@ -129,7 +135,10 @@
                                  :iss   "local"
                                  :aud   "local"
                                  :iat   (int (/ issue-date 1000))
-                                 :exp   (int (/ expiration-date 1000))}}
+                                 :exp   (int (/ expiration-date 1000))}
+         :alloc-auth/ext-token  (debug-sign/sign-using-debug-key
+                                  server-config/debug-local-jwt
+                                  {:email user-email})}
         (attach-session-id-to-login-info)))))
 
 (defn build-permissions
@@ -257,48 +266,6 @@
                             {:expired-date  now
                              :expired-identity identity}))))
                     ctx)))})))
-
-(def alloc-auth-session-auth-backend
-  (auth.backends/session
-   {:unauthorized-handler
-    (fn unauthorized-handler
-      [request metadata]
-      (let [{user         :user
-             roles        :roles
-             required     :required
-             user-session :user-session}
-            (get-in metadata [:details :request])
-            user-response-session
-            (keyword
-             (if user (name user) "anonymous")
-             (if user-session (name user-session) "anonymous"))
-            error-message
-            (str "NOT AUTHORIZED (SESSION): In unauthenticated handler for "
-                 "uri: " (pr-str (:uri request)) ". "
-                 "user: " (pr-str user) ", "
-                 "roles: " (pr-str roles) ", "
-                 "required roles: " (pr-str required) ". "
-                 "session-id: " (pr-str user-response-session) ".")]
-        (log/error
-         error-message))
-      (cond
-         ;; If request is authenticated, raise 403 instead
-         ;; of 401 (because user is authenticated but permission
-         ;; denied is raised).
-        (auth/authenticated? request)
-        (-> (ring-response/response
-             {:reason
-              (str "Session authenticated, but not authorized for access to .\n"
-                   "Metadata : " (pr-str metadata))})
-            (assoc :status 403))
-         ;; In other cases, respond with a 401.
-        :else
-        (let [current-url (:uri request)]
-          (->
-           (ring-response/response
-            {:reason "Unauthorized"})
-           (assoc :status 401)
-           (ring-response/header "WWW-Authenticate" "tg-auth, type=1")))))}))
 
 (defn alloc-auth-authentication-interceptor
   [backend]
@@ -558,4 +525,29 @@
       (ring-response/bad-request
         {:message (str "Unknown user " user-email)}))))
 
+(defn alloc-auth-create-debug-token-for-user
+  [request]
+  (let
+    [user-email (get-in request [:path-params :email])
+     local-token (some-> user-email
+                         (alloc-auth-local-login))]
+
+    (if local-token
+      (do
+        (log/info (str "in alloc-auth-create-debug-token-for-user, "
+                       "generating debug-token for "
+                       user-email
+                       ", with local-token " (pr-str local-token)))
+
+        (->
+          (raw-response
+            {:identity
+             local-token
+             :token
+             (debug-sign/sign-using-debug-key
+               server-config/debug-local-jwt
+               {:email user-email})})))
+
+      (ring-response/bad-request
+        {:message (str "Unknown user " user-email)}))))
 

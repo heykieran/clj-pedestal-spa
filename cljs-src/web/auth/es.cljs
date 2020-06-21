@@ -122,7 +122,8 @@
 (rf/reg-event-fx
   :auth/logged-in-user-changed
   (fn [cofx [_ {user-id :user authority :authority
-                client-id :client-id expires :expires}]]
+                client-id :client-id expires :expires
+                ext-token :ext-token}]]
     (println "The signed-in user was changed to " (pr-str user-id))
     (let
       [db (:db cofx)]
@@ -132,7 +133,8 @@
                  merge
                  {:user user-id
                   :authority authority
-                  :client-id client-id :expires expires}))
+                  :client-id client-id :expires expires
+                  :ext-token ext-token}))
        :dispatch-n
            [[:auth/clear-database]
             #_(if user-id [:maybe-initialize-something])]

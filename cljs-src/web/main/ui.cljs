@@ -16,9 +16,12 @@
   [hide-sidebar current-logged-in-user]
   (let
     [menu-item-descs
-     [[:public "Public" :user]
-      [:user "User" :user]
-      [:admin  "Admin" :user]]]
+     [[:public :session "Public" :user]
+      [:user :session "User" :user]
+      [:admin :session "Admin" :user]
+      [:public :token "Public (t)" :user]
+      [:user :token "User (t)" :user]
+      [:admin :token "Admin (t)" :user]]]
     (into
       [:<>
        [:> sem/menu-item
@@ -40,7 +43,7 @@
         [:> sem/icon {:name :lock}]
         "Users"]]
       (mapv
-        (fn[[type-kw text icon-name]]
+        (fn[[type-kw sec-type text icon-name]]
           [:> sem/menu-item
            {:as "a"
             :on-click
@@ -49,7 +52,7 @@
                   (rf/dispatch
                     [:setup-main-item
                      current-logged-in-user
-                     type-kw]))}
+                     sec-type type-kw]))}
            [:> sem/icon {:name icon-name}]
            text])
         menu-item-descs))))

@@ -54,6 +54,7 @@ run-local: export ALLOC_KEYSTORE_PASSWORD=password # this is NOT the correct pas
 run-local: export ALLOC_PORT=8080
 run-local: export ALLOC_KEYSTORE_LOCATION=$(PWD)/$(DOCKER_LOCATION)/deploy/local/jetty-keystore
 run-local: export ALLOC_SESSION_STORE_KEY=akh6y98dhyt54sch
+run-local: export ALLOC_AUTH_DEBUG_JWT_KEY=\{\"kty\":\"EC\",\"crv\":\"P-256\",\"x\":\"xxxx\",\"y\":\"xxxx\",\"d\":\"xxxx\"\} # this is not correct either
 
 # make run-local ALLOC_KEYSTORE_PASSWORD=the_real_password ALLOC_AUTH_DEBUG_JWT_KEY=the_real_key
 run-local: build $(DOCKER_LOCATION)/deploy

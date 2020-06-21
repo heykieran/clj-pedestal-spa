@@ -12,6 +12,7 @@ WORKDIR /app
 
 ENV ALLOC_KEYSTORE_LOCATION=/app/local/jetty-keystore \
     ALLOC_KEYSTORE_PASSWORD=password \
+    ALLOC_AUTH_DEBUG_JWT_KEY=garbage \
     ALLOC_SESSION_STORE_KEY=bogusbogus123456 \
     ALLOC_PORT=8080 \
     ALLOC_SSL_PORT=8081 \

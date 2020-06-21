@@ -34,3 +34,8 @@ spec:
             secretKeyRef:
               key: ALLOC_SESSION_STORE_KEY
               name: allocations-app-v1-secrets
+        - name: ALLOC_AUTH_DEBUG_JWT_KEY
+          valueFrom:
+            secretKeyRef:
+              key: ALLOC_AUTH_DEBUG_JWT_KEY
+              name: allocations-app-v1-secrets

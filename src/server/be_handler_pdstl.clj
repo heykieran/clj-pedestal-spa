@@ -11,6 +11,7 @@
     [ring.middleware.session.cookie :refer [cookie-store]]
     [io.pedestal.http.ring-middlewares :as middlewares]
     [server.auth.base :as app-auth]
+    [server.auth.header :as app-header-auth]
     [config.server :as server-config]
     [java-time :as time])
   (:import (org.eclipse.jetty.server Server)))
@@ -198,7 +199,7 @@
 (def alloc-auth-interceptors
   [(app-auth/expire-identity-interceptor)
    (app-auth/alloc-auth-authentication-interceptor
-    app-auth/alloc-auth-session-auth-backend)
+    app-header-auth/alloc-auth-google-header-token-auth-backend)
    (app-auth/alloc-auth-user-roles-interceptor)
    (app-auth/alloc-auth-unauthorized-interceptor)
    (app-auth/alloc-auth-permission-checker-interceptor-factory)
@@ -263,6 +264,7 @@
     #{["/" :get landing-page :route-name :landing-page]
       ["/healthz" :get health-report :route-name :health-check]
       ["/echo"  :get echo :route-name :echo]
+      ["/debug/token/:email" :post app-auth/alloc-auth-create-debug-token-for-user :route-name :create-debug-token]
       ["/auth/isauthenticated" :post (build-secured-route-vec-to app-auth/get-current-logged-in-user) :route-name :alloc-public/is-authenticated]
       ["/auth/setid" :post (build-secured-route-vec-to app-auth/alloc-auth-explicitly-set-identity-of-user-post) :route-name :alloc-public/auth-set-id-post]
       ["/auth/google" :post (build-secured-route-vec-to app-auth/alloc-auth-google-login) :route-name :alloc-public/google-login-post]
@@ -270,6 +272,9 @@
       ["/api/getsecresource/p" :post (build-secured-route-vec-to get-secured-resource) :route-name :alloc-public/test-res]
       ["/api/getsecresource/u" :post (build-secured-route-vec-to get-secured-resource) :route-name :alloc-user/test-res]
       ["/api/getsecresource/a" :post (build-secured-route-vec-to get-secured-resource) :route-name :test-res]
+      ["/api/getsecresource/p/h" :post (build-secured-route-vec-to get-secured-resource) :route-name :alloc-public/hdr-test-res]
+      ["/api/getsecresource/u/h" :post (build-secured-route-vec-to get-secured-resource) :route-name :alloc-user/hdr-test-res]
+      ["/api/getsecresource/a/h" :post (build-secured-route-vec-to get-secured-resource) :route-name :hdr-test-res]
       ["/r/home" :get [content-neg-intc respond-with-app-page] :route-name :app-main-page]}))
 
 (app-auth/build-permissions routes)
